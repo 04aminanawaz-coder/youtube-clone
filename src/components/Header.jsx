@@ -176,9 +176,9 @@ export default function Header({ query, onQueryChange, onToggleSidebar }) {
           <Dropdown open={menu === "bell"} onClose={() => setMenu(null)} className="min-w-[320px] max-h-[400px] overflow-y-auto yt-scroll">
             <p className="px-4 py-2 text-base font-medium border-b border-[#e5e5e5] mb-1">Notifications</p>
             {[
-              ["Rick Astley", "uploaded: Never Gonna Give You Up", "16 years ago"],
-              ["Rockstar Games", "uploaded: Grand Theft Auto VI Trailer 1", "1 year ago"],
-              ["Ed Sheeran", "uploaded: Shape of You", "9 years ago"],
+              ["freeCodeCamp.org", "uploaded: Learn Python - Full Course for Beginners", "8 years ago"],
+              ["SuperSimpleDev", "uploaded: React Tutorial Full Course - Beginner to Pro", "7 months ago"],
+              ["Apna College", "uploaded: HTML Tutorial for Beginners", "3 years ago"],
             ].map(([who, what, when], i) => (
               <button key={i} className="flex gap-3 px-4 py-3 hover:bg-[#f2f2f2] text-left w-full" onClick={() => setMenu(null)}>
                 <span className="w-9 h-9 rounded-full bg-[#606060] text-white flex items-center justify-center text-sm shrink-0">

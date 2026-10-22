@@ -1,55 +1,75 @@
 import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import CategoryChips from "./components/CategoryChips";
 import VideoGrid from "./components/VideoGrid";
+import WatchPage from "./components/WatchPage";
 import videos from "./data/videos";
 
 export default function App() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState("home");
+  // Guide starts expanded only on desktop-width screens; on phones/tablets
+  // it stays closed until the menu button opens it as a drawer.
+  const [sidebarExpanded, setSidebarExpanded] = useState(
+    () => typeof window !== "undefined" && window.innerWidth >= 1024
+  );
 
   const filtered = videos.filter((v) => {
-    const matchesCategory = category === "All" || v.category === category;
     const q = query.trim().toLowerCase();
     const matchesQuery =
-      !q ||
-      v.title.toLowerCase().includes(q) ||
-      v.channel.toLowerCase().includes(q);
-    return matchesCategory && matchesQuery;
+      !q || v.title.toLowerCase().includes(q) || v.channel.toLowerCase().includes(q);
+    const matchesCategory = category === "All" || v.categories.includes(category);
+    return matchesQuery && matchesCategory;
   });
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900">
+    <div className="min-h-screen bg-white text-[#0f0f0f]">
       <Header
         query={query}
         onQueryChange={setQuery}
-        onToggleSidebar={() => setSidebarOpen((o) => !o)}
+        onToggleSidebar={() => setSidebarExpanded((e) => !e)}
       />
 
       <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        active={activeNav}
-        onActiveChange={setActiveNav}
+        expanded={sidebarExpanded}
+        onNavigate={() => {}}
+        onBackdrop={() => setSidebarExpanded(false)}
       />
 
-      {/* Main content — offset for the desktop rail */}
       <main
-        className={`pt-14 transition-[margin] duration-200 ease-out ${
-          sidebarOpen ? "lg:ml-60" : "lg:ml-[72px]"
+        className={`pt-14 transition-[margin] duration-150 ${
+          sidebarExpanded ? "lg:ml-60" : "lg:ml-[72px]"
         }`}
       >
-        {/* Sticky chips row under the header */}
-        <div className="sticky top-14 z-30 bg-white/95 backdrop-blur px-4 sm:px-6">
-          <CategoryChips active={category} onChange={setCategory} />
-        </div>
-
-        <div className="px-4 sm:px-6 pb-10">
-          <VideoGrid videos={filtered} />
-        </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <div className="sticky top-14 z-20 bg-white">
+                  <CategoryChips active={category} onChange={setCategory} />
+                </div>
+                <div className="px-6 pb-10">
+                  <VideoGrid videos={filtered} />
+                </div>
+              </>
+            }
+          />
+          <Route path="/watch/:id" element={<WatchPage />} />
+          <Route
+            path="*"
+            element={
+              <div className="p-10 text-center text-sm text-[#606060]">
+                Page not found in this prototype.{" "}
+                <a href="/" className="text-[#065fd4] hover:underline">
+                  Go home
+                </a>
+              </div>
+            }
+          />
+        </Routes>
       </main>
     </div>
   );
